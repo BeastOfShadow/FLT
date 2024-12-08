@@ -127,4 +127,47 @@ class TestScanner {
 			scanner.nextToken();
 		});
 	}
+
+	@Test
+	void testOpsDels() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testOpsDels.txt");
+		Token t;
+
+		t = new Token(TokenType.PLUS, 1);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.OP_ASSIGN, 1, "/=");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.MINUS, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TIMES, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.DIVIDE, 3);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.OP_ASSIGN, 5, "+=");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ASSIGN, 6);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.OP_ASSIGN, 6, "-=");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.MINUS, 8);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ASSIGN, 8);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.OP_ASSIGN, 8, "*=");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.SEMI, 10);
+		assertTrue(t.equals(scanner.nextToken()));
+	}
 }

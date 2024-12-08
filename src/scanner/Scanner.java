@@ -39,6 +39,8 @@ public class Scanner {
 	 */
 	private Map<Character, TokenType> delimTkType;
 
+	// private Map<String, TokenType> opAssignTkType;
+
 	/**
 	 * Mapping strings: "print", "float", "int" and corresponding TokenType.
 	 */
@@ -100,8 +102,8 @@ public class Scanner {
 			// Se nextChar e' o in operators oppure delimitatore
 			// ritorna il Token associato con l'operatore o il delimitatore
 			// Attenzione agli operatori di assegnamento!
-			if (operTkType.containsKey(peekChar()) || delimTkType.containsKey(peekChar())) {
-
+			if (operTkType.containsKey(peekChar())) {
+				return scanOperator();
 			}
 
 			// Se nextChar e' ; o =
@@ -157,11 +159,17 @@ public class Scanner {
 
 	/**
 	 * 
-	 * 
-	 * private Token scanOperator() {
-	 * 
-	 * }
+	 * @return
+	 * @throws IOException
 	 */
+	private Token scanOperator() throws IOException {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(readChar());
+
+		return peekChar() == '=' ? new Token(TokenType.OP_ASSIGN, row, builder.append(readChar()).toString())
+				: new Token(operTkType.get(builder.toString().charAt(0)), row);
+	}
 
 	/**
 	 * 
