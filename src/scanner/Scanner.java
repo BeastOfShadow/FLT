@@ -11,7 +11,7 @@ import token.*;
 
 public class Scanner {
 	final char EOF = (char) -1;
-	private int riga;
+	private int row;
 	private PushbackReader buffer;
 
 	/**
@@ -52,7 +52,7 @@ public class Scanner {
 	 */
 	public Scanner(String fileName) throws FileNotFoundException {
 		this.buffer = new PushbackReader(new FileReader(fileName));
-		riga = 1;
+		row = 1;
 
 		skpChars = Set.of(' ', '\n', '\t', '\r', EOF);
 		letters = Set.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -64,48 +64,50 @@ public class Scanner {
 		keyWordsTkType = Map.of("print", TokenType.PRINT, "float", TokenType.TYFLOAT, "int", TokenType.TYINT);
 	}
 
+	/**
+	 * 
+	 */
 	public Token nextToken() throws IOException, LexicalException {
 
 		// nextChar contiene il prossimo carattere dell'input (non consumato).
-		char nextChar = peekChar(); // Catturate l'eccezione IOException e
+		char nextChar; // Catturate l'eccezione IOException e
 		// ritornate una LexicalException che la contiene
 
 		// Avanza nel buffer leggendo i carattere in skipChars
-		while (skpChars.contains(nextChar)) {
+		while (skpChars.contains(peekChar())) {
 
 			// incrementando riga se leggi '\n'.
-			if (nextChar == '\n')
-				riga++;
+			if (peekChar() == '\n')
+				row++;
 
 			// Se raggiungi la fine del file ritorna il Token EOF
-			if (nextChar == EOF) {
+			if (peekChar() == EOF) {
 				readChar();
-				Token token = new Token(TokenType.EOF, riga);
+				Token token = new Token(TokenType.EOF, row);
 				return token;
 			}
 
-			nextChar = readChar();
+			readChar();
 		}
 
-		while (nextChar != '\n') {
+		while (peekChar() != '\n') {
 			// Se nextChar e' in letters
 			// return scanId()
 			// che deve generare o un Token ID o parola chiave
-			if (letters.contains(nextChar))
+			if (letters.contains(peekChar()))
 				return scanId();
 
 			// Se nextChar e' o in operators oppure delimitatore
 			// ritorna il Token associato con l'operatore o il delimitatore
 			// Attenzione agli operatori di assegnamento!
-			if (operTkType.containsKey(nextChar) || delimTkType.containsKey(nextChar)) {
+			if (operTkType.containsKey(peekChar()) || delimTkType.containsKey(peekChar())) {
 
 			}
 
 			// Se nextChar e' ; o =
 			// ritorna il Token associato
-			if (delimTkType.containsKey(nextChar)) {
-				nextChar = readChar();
-				return new Token(delimTkType.get(nextChar), riga);
+			if (delimTkType.containsKey(peekChar())) {
+				return new Token(delimTkType.get(readChar()), row);
 			}
 
 			// Se nextChar e' in numbers
@@ -113,16 +115,18 @@ public class Scanner {
 			// che legge sia un intero che un float e ritorna il Token INUM o FNUM
 			// i caratteri che leggete devono essere accumulati in una stringa
 			// che verra' assegnata al campo valore del Token
-			if (digits.contains(nextChar))
+			if (digits.contains(peekChar()))
 				return scanNumber();
 
-			nextChar = readChar();
+			char error = readChar();
+
+			throw new LexicalException("ERROR: illegal character. Row: " + row + ", character: " + error);
 		}
 
 		// Altrimenti il carattere NON E' UN CARATTERE LEGALE sollevate una
 		// eccezione lessicale dicendo la riga e il carattere che la hanno
 		// provocata.
-		throw new LexicalException("ERROR: illegal character. Row: " + riga + ", character: " + nextChar);
+		throw new LexicalException("ERROR: illegal character. Row: " + row + ", character: " + peekChar());
 	}
 
 	/**
@@ -142,16 +146,18 @@ public class Scanner {
 			}
 
 			if (keyWordsTkType.containsKey(builder.toString())) {
-				return new Token(keyWordsTkType.get(builder.toString()), riga, builder.toString());
+				return new Token(keyWordsTkType.get(builder.toString()), row, builder.toString());
 			}
 
-			throw new LexicalException("ERROR: invalid format for id. Must contains key words");
+			throw new LexicalException("ERROR: invalid format for id. Must contains key words. Result=" + builder);
 		}
 
-		throw new LexicalException("ERROR: invalid format for id. Must start with a character.");
+		throw new LexicalException("ERROR: invalid format for id. Must start with a character. Result=" + builder);
 	}
 
-	/*
+	/**
+	 * 
+	 * 
 	 * private Token scanOperator() {
 	 * 
 	 * }
@@ -180,7 +186,7 @@ public class Scanner {
 			}
 
 			if (countFloatingPoint > 5) {
-				throw new LexicalException("ERROR: float have more than 5 decimals number. Result = " + builder);
+				throw new LexicalException("ERROR: float have more than 5 decimals number. Result=" + builder);
 			}
 		}
 
@@ -188,11 +194,24 @@ public class Scanner {
 			while (!skpChars.contains(peekChar())) {
 				builder.append(readChar());
 			}
-			throw new LexicalException("ERROR: token is NaN. Result = " + builder);
+			throw new LexicalException("ERROR: token is NaN. Result=" + builder);
 		}
 
-		return builder.toString().contains(".") ? new Token(TokenType.FLOAT, riga, builder.toString())
-				: new Token(TokenType.INT, riga, builder.toString());
+		return builder.toString().contains(".") ? new Token(TokenType.FLOAT, row, builder.toString())
+				: new Token(TokenType.INT, row, builder.toString());
+
+		/*
+		 * if(skpChars.contains(peekChar())) {
+		 * return builder.toString().contains(".") ? new Token(TokenType.FLOAT, row,
+		 * builder.toString()) : new Token(TokenType.INT, row, builder.toString());
+		 * }
+		 * 
+		 * while (!skpChars.contains(peekChar())) {
+		 * builder.append(readChar());
+		 * }
+		 * 
+		 * throw new LexicalException("ERROR: token is NaN. Result=" + builder);
+		 */
 	}
 
 	/**

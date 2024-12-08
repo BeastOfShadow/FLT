@@ -73,6 +73,15 @@ public class Token {
 		return value;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Token)) return false;
+
+		Token token = (Token) obj;
+
+		return token.row == row && token.type == type && (token.value == null ?  true : token.value.equals(value));
+	}
+
 	/**
 	 * Returns a string representation of the token.
 	 * <p>
