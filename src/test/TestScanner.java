@@ -15,7 +15,6 @@ import token.TokenType;
 
 class TestScanner {
 
-	// DA FINIRE
 	@Test
 	void testCaratteriNonCaratteri() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, InvocationTargetException {
@@ -37,10 +36,9 @@ class TestScanner {
 			scanner.nextToken();
 		});
 
-		/*
-		 * t = new Token(TokenType.PLUS, 3);
-		 * assertTrue(t.equals(scanner.nextToken()));
-		 */
+		
+		t = new Token(TokenType.PLUS, 3);
+		assertTrue(t.equals(scanner.nextToken()));
 	}
 
 	@Test
@@ -53,20 +51,19 @@ class TestScanner {
 		assertTrue(t.equals(scanner.nextToken()));
 	}
 
-	// DA RIVEDERE
 	@Test
 	void testErroriNumbers() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, InvocationTargetException {
 		Scanner scanner = new Scanner("src/test/data/testScanner/erroriNumbers.txt");
 		Token t;
 
-		/*
-		 * t = new Token(TokenType.INT, 1, "0");
-		 * assertTrue(t.equals(scanner.nextToken()));
-		 * 
-		 * t = new Token(TokenType.INT, 1, "33");
-		 * assertTrue(t.equals(scanner.nextToken()));
-		 */
+		
+		 t = new Token(TokenType.INT, 1, "0");
+		 assertTrue(t.equals(scanner.nextToken()));
+		 
+		 t = new Token(TokenType.INT, 1, "33");
+		 assertTrue(t.equals(scanner.nextToken()));
+		 
 		assertThrows(LexicalException.class, () -> {
 			scanner.nextToken();
 		});
@@ -74,14 +71,6 @@ class TestScanner {
 		assertThrows(LexicalException.class, () -> {
 			scanner.nextToken();
 		});
-
-		assertThrows(LexicalException.class, () -> {
-			scanner.nextToken();
-		});
-		/*
-		 * t = new Token(TokenType.EOF, 5);
-		 * assertTrue(t.equals(scanner.nextToken()));
-		 */
 	}
 
 	@Test
@@ -95,37 +84,177 @@ class TestScanner {
 	}
 
 	@Test
-	void testIdKeyWords() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+	void testFloat() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, InvocationTargetException {
-		Scanner scanner = new Scanner("src/test/data/testScanner/testIdKeyWords.txt");
+		Scanner scanner = new Scanner("src/test/data/testScanner/testFloat.txt");
+		Token t;
+
+		t = new Token(TokenType.FLOAT, 1, "098.8095");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		assertThrows(LexicalException.class, () -> {
+			scanner.nextToken();
+		});
+
+		assertThrows(LexicalException.class, () -> {
+			scanner.nextToken();
+		});
+
+		t = new Token(TokenType.FLOAT, 5, "89.99999");
+		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void testGenerale() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testGenerale.txt");
 		Token t;
 
 		t = new Token(TokenType.TYINT, 1, "int");
 		assertTrue(t.equals(scanner.nextToken()));
 
-		assertThrows(LexicalException.class, () -> {
-			scanner.nextToken();
-		});
-
-		t = new Token(TokenType.TYFLOAT, 2, "float");
+		t = new Token(TokenType.ID, 1, "temp");
 		assertTrue(t.equals(scanner.nextToken()));
 
-		t = new Token(TokenType.PRINT, 3, "print");
+		t = new Token(TokenType.SEMI, 1);
 		assertTrue(t.equals(scanner.nextToken()));
 
-		assertThrows(LexicalException.class, () -> {
-			scanner.nextToken();
-		});
-		assertThrows(LexicalException.class, () -> {
-			scanner.nextToken();
-		});
+		t = new Token(TokenType.ID, 2, "temp");
+		assertTrue(t.equals(scanner.nextToken()));
 
-		t = new Token(TokenType.TYINT, 6, "int");
+		t = new Token(TokenType.OP_ASSIGN, 2, "+=");
 		assertTrue(t.equals(scanner.nextToken()));
 
 		assertThrows(LexicalException.class, () -> {
 			scanner.nextToken();
 		});
+
+		t = new Token(TokenType.SEMI, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TYFLOAT, 4);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 4, "b");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.SEMI, 4);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 5, "b");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ASSIGN, 5);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 5, "temp");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.PLUS, 5);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.FLOAT, 5, "3.2");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.SEMI, 5);
+		assertTrue(t.equals(scanner.nextToken()));
+		
+		t = new Token(TokenType.PRINT, 6);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 6, "b");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.SEMI, 6);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.EOF, 7);
+		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void testId() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testId.txt");
+		Token t;
+
+		t = new Token(TokenType.ID, 1, "jskjdsfhkjdshkf");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 2, "printl");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 4, "ffloat");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 6, "hhhjj");
+		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void testIdKeyWords() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testIdKeyWords.txt");
+		Token t;
+
+		t = new Token(TokenType.TYINT, 1);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 1, "inta");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TYFLOAT, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.PRINT, 3);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 4, "nome");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 5, "intnome");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TYINT, 6);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.ID, 6, "nome");
+		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void testInt() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testInt.txt");
+		Token t;
+
+		t = new Token(TokenType.INT, 1, "0050");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.INT, 2, "698");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.INT, 4, "560099");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.INT, 5, "1234");
+		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void testKeyWords() throws IOException, LexicalException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, InvocationTargetException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testKeywords.txt");
+		Token t;
+
+		t = new Token(TokenType.PRINT, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TYFLOAT, 2);
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.TYINT, 5);
+		assertTrue(t.equals(scanner.nextToken()));
 	}
 
 	@Test
