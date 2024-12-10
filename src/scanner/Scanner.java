@@ -67,10 +67,21 @@ public class Scanner {
 	}
 
 	/**
+	 * Reads and returns the next valid token from the input file.<br>
 	 * 
+	 * This method skips all whitespace characters defined in `skpChars` and handles
+	 * the following types of tokens:<br>
+	 * - Identifiers and keywords (via `scanId()`);<br>
+	 * - Operators (via `scanOperator()`);<br>
+	 * - Delimiters like '=' and ';';<br>
+	 * - Integer and floating-point numbers (via `scanNumber()`).
+	 * 
+	 * @return The next valid token
+	 * @throws IOException      if an I/O error occurs while reading the file
+	 * @throws LexicalException if a lexical error is encountered (invalid
+	 *                          character)
 	 */
 	public Token nextToken() throws IOException, LexicalException {
-
 		// nextChar contiene il prossimo carattere dell'input (non consumato).
 		char nextChar; // Catturate l'eccezione IOException e
 		// ritornate una LexicalException che la contiene
@@ -93,15 +104,19 @@ public class Scanner {
 		}
 
 		while (peekChar() != '\n') {
-			// Se nextChar e' in letters
-			// return scanId()
-			// che deve generare o un Token ID o parola chiave
+			/*
+			 * Se nextChar e' in letters
+			 * return scanId()
+			 * che deve generare o un Token ID o parola chiave
+			 */
 			if (letters.contains(peekChar()))
 				return scanId();
 
-			// Se nextChar e' o in operators oppure delimitatore
-			// ritorna il Token associato con l'operatore o il delimitatore
-			// Attenzione agli operatori di assegnamento!
+			/*
+			 * Se nextChar e' o in operators oppure delimitatore
+			 * ritorna il Token associato con l'operatore o il delimitatore
+			 * Attenzione agli operatori di assegnamento!
+			 */
 			if (operTkType.containsKey(peekChar())) {
 				return scanOperator();
 			}
@@ -132,10 +147,16 @@ public class Scanner {
 	}
 
 	/**
+	 * Reads and returns an identifier (ID) or keyword token.
 	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws LexicalException
+	 * An identifier starts with a letter and may contain letters and digits.
+	 * If the text matches a keyword defined in `keyWordsTkType`,
+	 * it returns the corresponding keyword token.
+	 * 
+	 * @return a token of type `ID` or a keyword (`PRINT`, `TYFLOAT`, `TYINT`)
+	 * @throws IOException      if an I/O error occurs while reading the file
+	 * @throws LexicalException if the identifier is invalid (does not start with a
+	 *                          letter)
 	 */
 	private Token scanId() throws IOException, LexicalException {
 		StringBuilder builder = new StringBuilder();
@@ -148,19 +169,23 @@ public class Scanner {
 			}
 
 			if (keyWordsTkType.containsKey(builder.toString())) {
-				return new Token(keyWordsTkType.get(builder.toString()), row, builder.toString());
+				return new Token(keyWordsTkType.get(builder.toString()), row);
 			}
 
-			throw new LexicalException("ERROR: invalid format for id. Must contains key words. Result=" + builder);
+			return new Token(TokenType.ID, row, builder.toString());
 		}
 
 		throw new LexicalException("ERROR: invalid format for id. Must start with a character. Result=" + builder);
 	}
 
 	/**
+	 * Reads and returns an operator token.
 	 * 
-	 * @return
-	 * @throws IOException
+	 * This method handles basic operators such as '+', '-', '*', '/' and assignment
+	 * operators like '=' and '=='.
+	 * 
+	 * @return a token corresponding to the operator read
+	 * @throws IOException if an I/O error occurs while reading the file
 	 */
 	private Token scanOperator() throws IOException {
 		StringBuilder builder = new StringBuilder();
@@ -172,20 +197,29 @@ public class Scanner {
 	}
 
 	/**
+	 * Reads and returns a numeric token (integer or float).
 	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws LexicalException
+	 * This method handles both integers and floating-point numbers, ensuring that:
+	 * - Floating-point numbers do not have more than 5 decimal places.
+	 * - Floating-point numbers have at least one digit after the decimal point.
+	 * 
+	 * If an invalid format is detected, a lexical exception is thrown.
+	 * 
+	 * @return a token of type `INT` for integers or `FLOAT` for floating-point
+	 *         numbers
+	 * @throws IOException      if an I/O error occurs while reading the file
+	 * @throws LexicalException if the number format is invalid
 	 */
 	private Token scanNumber() throws IOException, LexicalException {
 		StringBuilder builder = new StringBuilder();
+		int countFloatingPoint = 0;
+		boolean lexicalError = false;
 
 		while (digits.contains(peekChar())) {
 			builder.append(readChar());
 		}
 
 		if (peekChar() == '.') {
-			int countFloatingPoint = 0;
 			builder.append(readChar());
 
 			while (digits.contains(peekChar())) {
@@ -193,16 +227,24 @@ public class Scanner {
 				countFloatingPoint++;
 			}
 
+			if (countFloatingPoint == 0) {
+				throw new LexicalException("ERROR: invalid float format. No digits after decimal point. Result="
+						+ builder + ", row: " + row);
+			}
+
 			if (countFloatingPoint > 5) {
-				throw new LexicalException("ERROR: float have more than 5 decimals number. Result=" + builder);
+				throw new LexicalException(
+						"ERROR: float have more than 5 decimals number. Result=" + builder + ", row: " + row);
 			}
 		}
 
-		if (!digits.contains(peekChar())) {
-			while (!skpChars.contains(peekChar())) {
-				builder.append(readChar());
-			}
-			throw new LexicalException("ERROR: token is NaN. Result=" + builder);
+		while (letters.contains(peekChar()) || peekChar() == '.' || digits.contains(peekChar())) {
+			readChar();
+			lexicalError = true;
+		}
+
+		if (lexicalError) {
+			throw new LexicalException("ERROR: invalid format. Result=" + builder + ", row: " + row);
 		}
 
 		return builder.toString().contains(".") ? new Token(TokenType.FLOAT, row, builder.toString())
