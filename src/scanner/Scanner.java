@@ -46,6 +46,8 @@ public class Scanner {
 	 */
 	private Map<String, TokenType> keyWordsTkType;
 
+	private Token nextTk;
+
 	/**
 	 * Initializes token types and sets up file reading.
 	 * 
@@ -64,6 +66,14 @@ public class Scanner {
 		operTkType = Map.of('+', TokenType.PLUS, '-', TokenType.MINUS, '*', TokenType.TIMES, '/', TokenType.DIVIDE);
 		delimTkType = Map.of('=', TokenType.ASSIGN, ';', TokenType.SEMI);
 		keyWordsTkType = Map.of("print", TokenType.PRINT, "float", TokenType.TYFLOAT, "int", TokenType.TYINT);
+	}
+
+	public Token peekToken() throws IOException, LexicalException {
+		if(nextTk == null) {
+			nextTk = nextToken();	
+		}
+
+		return nextTk;
 	}
 
 	/**
@@ -85,6 +95,13 @@ public class Scanner {
 		// nextChar contiene il prossimo carattere dell'input (non consumato).
 		char nextChar; // Catturate l'eccezione IOException e
 		// ritornate una LexicalException che la contiene
+
+		if(nextTk != null) {
+			Token aus = nextTk;
+
+			nextTk = null;
+			return aus;
+		}
 
 		// Avanza nel buffer leggendo i carattere in skipChars
 		while (skpChars.contains(peekChar())) {

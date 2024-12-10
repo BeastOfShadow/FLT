@@ -36,7 +36,6 @@ class TestScanner {
 			scanner.nextToken();
 		});
 
-		
 		t = new Token(TokenType.PLUS, 3);
 		assertTrue(t.equals(scanner.nextToken()));
 	}
@@ -57,13 +56,12 @@ class TestScanner {
 		Scanner scanner = new Scanner("src/test/data/testScanner/erroriNumbers.txt");
 		Token t;
 
-		
-		 t = new Token(TokenType.INT, 1, "0");
-		 assertTrue(t.equals(scanner.nextToken()));
-		 
-		 t = new Token(TokenType.INT, 1, "33");
-		 assertTrue(t.equals(scanner.nextToken()));
-		 
+		t = new Token(TokenType.INT, 1, "0");
+		assertTrue(t.equals(scanner.nextToken()));
+
+		t = new Token(TokenType.INT, 1, "33");
+		assertTrue(t.equals(scanner.nextToken()));
+
 		assertThrows(LexicalException.class, () -> {
 			scanner.nextToken();
 		});
@@ -158,7 +156,7 @@ class TestScanner {
 
 		t = new Token(TokenType.SEMI, 5);
 		assertTrue(t.equals(scanner.nextToken()));
-		
+
 		t = new Token(TokenType.PRINT, 6);
 		assertTrue(t.equals(scanner.nextToken()));
 
@@ -298,5 +296,19 @@ class TestScanner {
 
 		t = new Token(TokenType.SEMI, 10);
 		assertTrue(t.equals(scanner.nextToken()));
+	}
+
+	@Test
+	void peekToken() throws IOException, LexicalException {
+		Scanner scanner = new Scanner("src/test/data/testScanner/testGenerale.txt");
+
+		assertEquals(scanner.peekToken().getType(), TokenType.TYINT);
+		assertEquals(scanner.nextToken().getType(), TokenType.TYINT);
+		assertEquals(scanner.peekToken().getType(), TokenType.ID);
+		assertEquals(scanner.peekToken().getType(), TokenType.ID);
+		Token t = scanner.nextToken();
+		assertEquals(t.getType(), TokenType.ID);
+		assertEquals(t.getRow(), 1);
+		assertEquals(t.getValue(), "temp");
 	}
 }
