@@ -18,8 +18,6 @@ public class Token {
 	 */
 	private String value;
 
-	// This might be used for tokens that do not have a meaningful textual
-	// representation.
 	/**
 	 * Constructs a token with a specified type and row, but no value.
 	 * 
@@ -33,8 +31,6 @@ public class Token {
 		this.value = value;
 	}
 
-	// This might be used for tokens that do not have a meaningful textual
-	// representation.
 	/**
 	 * Constructs a token with a specified type and row, but no value.
 	 * 
@@ -94,8 +90,7 @@ public class Token {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("<").append(type).append(",").append("r:" + row);
-		builder = value != null ? builder.append("," + value + ">") : builder.append(">");
-
-		return builder.toString();
+		
+		return value != null ? builder.append("," + value + ">").toString() : builder.append(">").toString();
 	}
 }

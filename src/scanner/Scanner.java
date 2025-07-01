@@ -7,9 +7,10 @@ import java.io.PushbackReader;
 import java.util.Map;
 import java.util.Set;
 
+import exception.LexicalException;
 import token.*;
 
-public class Scanner {
+public class Scanner implements IScanner {
 	final char EOF = (char) -1;
 	private int row;
 	private PushbackReader buffer;
@@ -39,13 +40,14 @@ public class Scanner {
 	 */
 	private Map<Character, TokenType> delimTkType;
 
-	// private Map<String, TokenType> opAssignTkType;
-
 	/**
 	 * Mapping strings: "print", "float", "int" and corresponding TokenType.
 	 */
 	private Map<String, TokenType> keyWordsTkType;
 
+	/**
+	 * Next token readed without consuming characters.
+	 */
 	private Token nextTk;
 
 	/**
@@ -68,11 +70,23 @@ public class Scanner {
 		keyWordsTkType = Map.of("print", TokenType.PRINT, "float", TokenType.TYFLOAT, "int", TokenType.TYINT);
 	}
 
-	public Token peekToken() throws IOException, LexicalException {
-		if(nextTk == null) {
-			nextTk = nextToken();	
+	/**
+	 * Peeks and returns the next valid token from the input file without consuming
+	 * characters.<br>
+	 * 
+	 * @return the next valid token
+	 * @throws IOException      if an I/O error occurs while reading the file
+	 * @throws LexicalException if a lexical error is encountered (invalid
+	 *                          character)
+	 */
+	public Token peekToken() throws LexicalException {
+		if (nextTk == null)
+		{
+			nextTk = nextToken();
+			System.out.println("Token peeked: " + nextTk);
+			System.out.println();
 		}
-
+		
 		return nextTk;
 	}
 
@@ -86,17 +100,17 @@ public class Scanner {
 	 * - Delimiters like '=' and ';';<br>
 	 * - Integer and floating-point numbers (via `scanNumber()`).
 	 * 
-	 * @return The next valid token
+	 * @return the next valid token
 	 * @throws IOException      if an I/O error occurs while reading the file
 	 * @throws LexicalException if a lexical error is encountered (invalid
 	 *                          character)
 	 */
-	public Token nextToken() throws IOException, LexicalException {
+	public Token nextToken() throws LexicalException {
 		// nextChar contiene il prossimo carattere dell'input (non consumato).
 		char nextChar; // Catturate l'eccezione IOException e
 		// ritornate una LexicalException che la contiene
 
-		if(nextTk != null) {
+		if (nextTk != null) {
 			Token aus = nextTk;
 
 			nextTk = null;
@@ -105,7 +119,6 @@ public class Scanner {
 
 		// Avanza nel buffer leggendo i carattere in skipChars
 		while (skpChars.contains(peekChar())) {
-
 			// incrementando riga se leggi '\n'.
 			if (peekChar() == '\n')
 				row++;
@@ -113,12 +126,18 @@ public class Scanner {
 			// Se raggiungi la fine del file ritorna il Token EOF
 			if (peekChar() == EOF) {
 				readChar();
+
 				Token token = new Token(TokenType.EOF, row);
+				
+				System.out.println("End reading file.");
+
 				return token;
 			}
 
 			readChar();
 		}
+
+		System.out.println("Peeking chars...");
 
 		while (peekChar() != '\n') {
 			/*
@@ -134,15 +153,13 @@ public class Scanner {
 			 * ritorna il Token associato con l'operatore o il delimitatore
 			 * Attenzione agli operatori di assegnamento!
 			 */
-			if (operTkType.containsKey(peekChar())) {
+			if (operTkType.containsKey(peekChar()))
 				return scanOperator();
-			}
 
 			// Se nextChar e' ; o =
 			// ritorna il Token associato
-			if (delimTkType.containsKey(peekChar())) {
+			if (delimTkType.containsKey(peekChar()))
 				return new Token(delimTkType.get(readChar()), row);
-			}
 
 			// Se nextChar e' in numbers
 			// return scanNumber()
@@ -175,8 +192,10 @@ public class Scanner {
 	 * @throws LexicalException if the identifier is invalid (does not start with a
 	 *                          letter)
 	 */
-	private Token scanId() throws IOException, LexicalException {
+	private Token scanId() throws LexicalException {
 		StringBuilder builder = new StringBuilder();
+
+		System.out.println("Hypotetical id detected...");
 
 		if (letters.contains(peekChar())) {
 			builder.append(readChar());
@@ -191,7 +210,7 @@ public class Scanner {
 
 			return new Token(TokenType.ID, row, builder.toString());
 		}
-
+		
 		throw new LexicalException("ERROR: invalid format for id. Must start with a character. Result=" + builder);
 	}
 
@@ -204,8 +223,10 @@ public class Scanner {
 	 * @return a token corresponding to the operator read
 	 * @throws IOException if an I/O error occurs while reading the file
 	 */
-	private Token scanOperator() throws IOException {
+	private Token scanOperator() throws LexicalException {
 		StringBuilder builder = new StringBuilder();
+
+		System.out.println("Hypotetical operator detected...");
 
 		builder.append(readChar());
 
@@ -227,10 +248,12 @@ public class Scanner {
 	 * @throws IOException      if an I/O error occurs while reading the file
 	 * @throws LexicalException if the number format is invalid
 	 */
-	private Token scanNumber() throws IOException, LexicalException {
+	private Token scanNumber() throws LexicalException {
 		StringBuilder builder = new StringBuilder();
 		int countFloatingPoint = 0;
 		boolean lexicalError = false;
+
+		System.out.println("Hypotetical number detected...");
 
 		while (digits.contains(peekChar())) {
 			builder.append(readChar());
@@ -238,6 +261,8 @@ public class Scanner {
 
 		if (peekChar() == '.') {
 			builder.append(readChar());
+
+			System.out.println("Hypotetical float number detected...");
 
 			while (digits.contains(peekChar())) {
 				builder.append(readChar());
@@ -266,19 +291,6 @@ public class Scanner {
 
 		return builder.toString().contains(".") ? new Token(TokenType.FLOAT, row, builder.toString())
 				: new Token(TokenType.INT, row, builder.toString());
-
-		/*
-		 * if(skpChars.contains(peekChar())) {
-		 * return builder.toString().contains(".") ? new Token(TokenType.FLOAT, row,
-		 * builder.toString()) : new Token(TokenType.INT, row, builder.toString());
-		 * }
-		 * 
-		 * while (!skpChars.contains(peekChar())) {
-		 * builder.append(readChar());
-		 * }
-		 * 
-		 * throw new LexicalException("ERROR: token is NaN. Result=" + builder);
-		 */
 	}
 
 	/**
@@ -287,8 +299,12 @@ public class Scanner {
 	 * @return read char
 	 * @throws IOException if I/O error exception while reading file
 	 */
-	private char readChar() throws IOException {
-		return ((char) this.buffer.read());
+	private char readChar() throws LexicalException {
+		try {
+			return ((char) this.buffer.read());
+		} catch (IOException e) {
+			throw new LexicalException(e.toString());
+		}
 	}
 
 	/**
@@ -297,9 +313,14 @@ public class Scanner {
 	 * @return read char
 	 * @throws IOException if I/O error exception while reading file
 	 */
-	private char peekChar() throws IOException {
-		char c = (char) buffer.read();
-		buffer.unread(c);
+	private char peekChar() throws LexicalException {
+		char c = 0;
+		try {
+			c = (char) buffer.read();
+			buffer.unread(c);
+		} catch (IOException e) {
+			throw new LexicalException(e.toString());
+		}
 		return c;
 	}
 }

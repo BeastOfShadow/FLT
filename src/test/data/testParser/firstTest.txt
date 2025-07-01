@@ -1,0 +1,4 @@
+int temp;
+print temp;
+float temp1;
+print temp1;
