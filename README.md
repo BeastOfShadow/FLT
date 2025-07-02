@@ -1,11 +1,13 @@
-# 🧠 MiniLang Compiler  
-**A simple compiler for a minimal programming language designed for didactic purposes.**
+# 🧠 MiniLang AC/DC Compiler  
+**A compiler for two toy languages: AC (an imperative C-like language) and DC (a stack-based postfix language).**
 
 ![Java](https://img.shields.io/badge/Java-17-blue) ![Platform](https://img.shields.io/badge/platform-CLI-lightgrey) ![License](https://img.shields.io/badge/License-MIT-green) ![Status](https://img.shields.io/badge/status-In%20Development-orange) ![Made with ❤️](https://img.shields.io/badge/made%20with-%E2%9D%A4-red)
 
 ---
 
-**MiniLang Compiler** is a compiler written in Java for a small, educational language supporting basic statements, arithmetic expressions, and control flow. It provides a full compilation pipeline including lexical, syntactic, and semantic analysis, along with an intermediate representation.
+**AC/DC Compiler** is a two-part compiler project developed for educational purposes. It supports two minimalistic languages:
+- **AC**: An imperative toy language with expressions, assignments, control flow, and I/O.
+- **DC**: A stack-based postfix language inspired by Unix’s `dc`, using reverse Polish notation.
 
 ---
 
@@ -19,6 +21,88 @@
 - 🖨 **Print statement support**  
 - ❌ **Custom exception handling** for syntactic and lexical errors  
 - 🧪 **JUnit testing** for core components  
+
+---
+
+## 🌤 Supported Languages
+
+| Language | Description                                                        |
+| -------- | ------------------------------------------------------------------ |
+| **AC**   | C-like imperative language with variables, operators, control flow |
+| **DC**   | Postfix (stack-based) expression language (like Unix `dc`)         |
+
+---
+
+## 📄 AC Language Overview
+
+### ✍️ Syntax (AC)
+
+```ac
+x = 3 + 4;
+y = x * 2;
+print y;
+```
+
+### 🎯 Features (AC)
+
+- Variables and assignments
+- Arithmetic expressions: `+`, `-`, `*`, `/`
+- Print statements: `print x;`
+- Semi-colon terminated statements
+
+---
+
+## 📄 DC Language Overview
+
+### ✍️ Syntax (DC)
+
+```dc
+3 4 + p
+```
+
+### 🎯 Features (DC)
+
+- Postfix notation (RPN)
+- Stack operations: push, pop, print
+- Arithmetic operations: `+`, `-`, `*`, `/`
+- `p` = print top of the stack
+- `n` = pop and discard top
+
+### ✅ Example:
+
+```dc
+5 1 2 + 4 * + 3 - p
+```
+
+Interpreted as:
+
+- Push `5`
+- Push `1`, `2` → `1 2 +` → `3`
+- `3 4 *` → `12`
+- `5 12 +` → `17`
+- `17 3 -` → `14`
+- `p` → prints `14`
+
+---
+
+## Tokens and Patterns
+
+| Token | Pattern | Class |
+|------|-------------|-------------|
+| `INT` | `[0-9]+` |   Constant/Litteral  |
+| `FLOAT` | `[0-9]+.([0-9]{0,5})` |   Constant/Literal  |
+| `ID` | `[a-z][a-z0-9]*` |   Identificator  |
+| `TYINT` | `int` |   Key Word  |
+| `TYFLOAT` | `float` |   Key Word  |
+| `PRINT` | `print` |   Key Word  |
+| `OP_ASSIGN` | `+= \| -=  \| *= \| /=` |   Operators  |
+| `ASSIGN` | `=` |   Operator  |
+| `PLUS` | `+` |   Operator  |
+| `MINUS` | `-` |   Operator  |
+| `TIMES` | `*` |   Operator  |
+| `DIVIDE` | `/` |   Operator  |
+| `SEMI` | `;` |   Delimiter  |
+| `EOF` | `(char) -1` |   End Input  |
 
 ---
 
@@ -50,14 +134,15 @@ minilang-compiler/
 │
 ├── src/
 │   ├── ast/              # AST node definitions
+│   ├── eception/         # Custom exception
 │   ├── parser/           # Parser and grammar implementation
-│   ├── lexer/            # Tokenizer and token types
-│   ├── semantic/         # Type checking, symbol table
-│   ├── main/             # Entry point for compilation
-│   └── test/             # Unit tests
+│   ├── scanner/          # Tokenizer and token types
+│   ├── symbolTable/      # Type checking, symbol table
+│   ├── test/             # Unit tests
+│   ├── token/            # Token structure and type enums
+│   └── visitor/          # Visitor pattern for AST traversal and interpretation
 │
-├── README.md
-└── pom.xml               # Maven configuration
+└── README.md               
 ```
 
 ---
@@ -115,6 +200,7 @@ Will produce a valid AST and simulate print output: `7`.
 This compiler was developed as an academic project by:
 
 - **Simone Negro** – [GitHub](https://github.com/BeastOfShadow) | [LinkedIn](https://www.linkedin.com/in/negro-simone-babb88238/)
+- **Cosimo Daniele** – [GitHub](https://github.com/The-Forest03)
 
 ---
 
