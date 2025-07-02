@@ -104,18 +104,78 @@ Interpreted as:
 | `SEMI` | `;` |   Delimiter  |
 | `EOF` | `(char) -1` |   End Input  |
 
+Character to ignore: `' ', '\n', '\t', '\r'`.
+
+Token format example: 
+
+```
+<TYINT,r:1><ID,r:1,tempa><SEMI,r:1>
+<ID,r:2,tempa><ASSIGN,r:2><INT,r:2,5><SEMI,r:2>
+<TYFLOAT,r:3><ID,r:3,tempb><ASSIGN,r:3><ID,r:3,tempa><DIVIDE,r:3>
+<FLOAT,r:3,3.2><SEMI,r:2>
+<ID,r:4,tempb><OP_ASSIGN,r:4,+=><INT,r:4,7><SEMI,r:4>
+<PRINT,r:5><ID,r:5,tempb><SEMI,r:5><EOF,r:5>
+```
 ---
 
-## 📜 Supported Grammar
+## 📘 Predictive Parsing Table (Grammar)
 
-| Rule | Description |
-|------|-------------|
-| `ID = EXP;` | Simple assignment |
-| `ID += EXP;` | Compound assignment |
-| `print ID;` | Print statement |
-| `EXP` | Arithmetic expressions with `+`, `-`, `*`, `/` and precedence |
-| `ID`, `NUM` | Identifiers and numeric literals |
+This table outlines the predictive parsing rules for the AC language grammar.
 
+| Num. | LHS   | RHS             | Predict Set                    |
+|------|-------|------------------|--------------------------------|
+| 0    | Prg   | DSs $            | { TYFLOAT, TYINT, ID, PRINT, EOF } |
+| 1    | DSs   | Dcl DSs          | { TYFLOAT, TYINT }             |
+| 2    | DSs   | Stm DSs          | { ID, PRINT }                  |
+| 3    | DSs   | ϵ                | { EOF }                        |
+| 4    | Dcl   | Ty id DclP       | { TYFLOAT, TYINT }             |
+| 5    | DclP  | ;                | { SEMI }                       |
+| 6    | DclP  | = Exp ;          | { ASSIGN }                     |
+| 7    | Stm   | id opAss Exp ;   | { ID }                         |
+| 8    | Stm   | print id ;       | { PRINT }                      |
+| 9    | Exp   | Tr ExpP          | { ID, FLOAT, INT }             |
+| 10   | ExpP  | + Tr ExpP        | { PLUS }                       |
+| 11   | ExpP  | - Tr ExpP        | { MINUS }                      |
+| 12   | ExpP  | ϵ                | { SEMI }                       |
+| 13   | Tr    | Val TrP          | { ID, FLOAT, INT }             |
+| 14   | TrP   | * Val TrP        | { TIMES }                      |
+| 15   | TrP   | / Val TrP        | { DIVIDE }                     |
+| 16   | TrP   | ϵ                | { MINUS, PLUS, SEMI }          |
+| 17   | Ty    | float            | { TYFLOAT }                    |
+| 18   | Ty    | int              | { TYINT }                      |
+| 19   | Val   | intVal           | { INT }                        |
+| 20   | Val   | floatVal         | { FLOAT }                      |
+| 21   | Val   | id               | { ID }                         |
+| 22   | Op    | =                | { ASSIGN }                     |
+| 23   | Op    | opAss            | { OP_ASSIGN }                  |
+
+To improve its readability:
+
+```bnf
+Prg  → DSs $
+
+DSs  → Dcl DSs | Stm DSs | ε
+
+Dcl  → Ty id DclP
+
+DclP → ; | = Exp ;
+
+Stm  → id opAss Exp ; | print id ;
+
+Exp  → Tr ExpP
+
+ExpP → + Tr ExpP | - Tr ExpP | ε
+
+Tr   → Val TrP
+
+TrP  → * Val TrP | / Val TrP | ε
+
+Ty   → float | int
+
+Val  → intVal | floatVal | id
+
+Op   → = | opAss
+```
 ---
 
 ## 🧑‍💻 Tech Stack
@@ -154,7 +214,7 @@ Follow these steps to run the project locally.
 ### 📥 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/minilang-compiler.git
+[git clone https://github.com/your-username/minilang-compiler.git](https://github.com/BeastOfShadow/FLT.git)
 cd minilang-compiler
 ```
 
@@ -166,15 +226,11 @@ mvn clean install
 
 ### 🚀 3. Run the compiler
 
-```bash
-mvn exec:java -Dexec.mainClass="compiler.Main" -Dexec.args="path/to/file.ml"
-```
-
-> Replace `path/to/file.ml` with the path to your MiniLang source file.
+There is no main entry point — only test files are provided to verify all functionalities. This is a necessary improvement.
 
 ---
 
-## 🧪 Example Input
+## 🧪 Example Input AC
 
 ```c
 x = 5;
@@ -183,6 +239,23 @@ print x;
 ```
 
 Will produce a valid AST and simulate print output: `7`.
+
+---
+
+## 🧪 Example Input DC
+
+```dc
+5 1 2 + 4 * + 3 - p
+```
+
+Interpreted as:
+
+- Push `5`
+- Push `1`, `2` → `1 2 +` → `3`
+- `3 4 *` → `12`
+- `5 12 +` → `17`
+- `17 3 -` → `14`
+- `p` → prints `14`
 
 ---
 
