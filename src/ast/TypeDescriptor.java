@@ -4,7 +4,7 @@ package ast;
  * Abstract class representing a type descriptor in the AST.
  * It contains information about the type, error message, and line number.
  */
-public abstract class TypeDescriptor {
+public class TypeDescriptor {
     private TypeTd type;
     private String message;
     private int row;
@@ -17,7 +17,7 @@ public abstract class TypeDescriptor {
      * @return true if compatible (default: always true)
      */
     public boolean compatibility(TypeDescriptor typeD) {
-        return true;
+        return this.getType() == TypeTd.FLOAT && typeD.getType() == TypeTd.INT ? false : true;
     }
 
     /**

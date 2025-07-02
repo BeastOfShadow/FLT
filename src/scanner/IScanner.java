@@ -6,7 +6,7 @@ import exception.LexicalException;
 import token.Token;
 
 public interface IScanner {
-    /**
+	/**
 	 * Peeks and returns the next valid token from the input file without consuming
 	 * characters.<br>
 	 * 
@@ -15,9 +15,9 @@ public interface IScanner {
 	 * @throws LexicalException if a lexical error is encountered (invalid
 	 *                          character)
 	 */
-    Token peekToken() throws LexicalException;
+	Token peekToken() throws LexicalException;
 
-    /**
+	/**
 	 * Reads and returns the next valid token from the input file.<br>
 	 * 
 	 * This method skips all whitespace characters defined in `skpChars` and handles

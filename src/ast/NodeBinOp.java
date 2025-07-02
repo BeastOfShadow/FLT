@@ -1,5 +1,7 @@
 package ast;
 
+import org.junit.platform.engine.support.hierarchical.Node;
+
 import visitor.IVisitor;
 
 public class NodeBinOp extends NodeExpr {
@@ -23,6 +25,10 @@ public class NodeBinOp extends NodeExpr {
 
     public NodeExpr getRight() {
         return right;
+    }
+
+    public void setOp(LangOper op) {
+        this.op = op;
     }
 
     @Override

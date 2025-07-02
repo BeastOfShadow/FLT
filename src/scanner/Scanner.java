@@ -80,13 +80,12 @@ public class Scanner implements IScanner {
 	 *                          character)
 	 */
 	public Token peekToken() throws LexicalException {
-		if (nextTk == null)
-		{
+		if (nextTk == null) {
 			nextTk = nextToken();
 			System.out.println("Token peeked: " + nextTk);
 			System.out.println();
 		}
-		
+
 		return nextTk;
 	}
 
@@ -128,7 +127,7 @@ public class Scanner implements IScanner {
 				readChar();
 
 				Token token = new Token(TokenType.EOF, row);
-				
+
 				System.out.println("End reading file.");
 
 				return token;
@@ -210,7 +209,7 @@ public class Scanner implements IScanner {
 
 			return new Token(TokenType.ID, row, builder.toString());
 		}
-		
+
 		throw new LexicalException("ERROR: invalid format for id. Must start with a character. Result=" + builder);
 	}
 
