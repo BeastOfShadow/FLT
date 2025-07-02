@@ -214,8 +214,8 @@ Follow these steps to run the project locally.
 ### 📥 1. Clone the repository
 
 ```bash
-[git clone https://github.com/your-username/minilang-compiler.git](https://github.com/BeastOfShadow/FLT.git)
-cd minilang-compiler
+https://github.com/BeastOfShadow/FLT.git
+cd FLT
 ```
 
 ### 🔧 2. Build the project
