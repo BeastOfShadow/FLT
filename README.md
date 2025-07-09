@@ -7,7 +7,7 @@
 
 **AC/DC Compiler** is a two-part compiler project developed for educational purposes. It supports two minimalistic languages:
 - **AC**: An imperative toy language with expressions, assignments, control flow, and I/O.
-- **DC**: A stack-based postfix language inspired by Unix’s `dc`, using reverse Polish notation.
+- **DC**: A stack-based postfix language inspired by Unix’s `dc`, using reverse Polish notation. To see the documentation, [click this link](https://www.gnu.org/software/bc/manual/dc-1.05/html_mono/dc.html).
 
 ---
 
