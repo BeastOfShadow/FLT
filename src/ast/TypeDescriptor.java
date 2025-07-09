@@ -1,7 +1,7 @@
 package ast;
 
 /**
- * Abstract class representing a type descriptor in the AST.
+ * Class representing a type descriptor in the AST.
  * It contains information about the type, error message, and line number.
  */
 public class TypeDescriptor {

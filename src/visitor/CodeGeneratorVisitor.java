@@ -61,6 +61,7 @@ public class CodeGeneratorVisitor implements IVisitor {
                 dec.accept(this);
                 if (!codeDc.isBlank()) {
                     System.out.println("Generated code for declaration: " + codeDc);
+                    //System.out.println();
                     generatedCode += codeDc + " ";
                 }
                 codeDc = "";
