@@ -200,7 +200,8 @@ minilang-compiler/
 │   ├── symbolTable/      # Type checking, symbol table
 │   ├── test/             # Unit tests
 │   ├── token/            # Token structure and type enums
-│   └── visitor/          # Visitor pattern for AST traversal and interpretation
+│   ├── visitor/          # Visitor pattern for AST traversal and interpretation
+│   └── Main              # Main where you can test the program
 │
 └── README.md               
 ```
@@ -226,7 +227,7 @@ mvn clean install
 
 ### 🚀 3. Run the compiler
 
-There is no main entry point — only test files are provided to verify all functionalities. This is a necessary improvement.
+Run `Main.java` to test our program!
 
 ---
 
