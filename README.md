@@ -83,6 +83,16 @@ Interpreted as:
 - `17 3 -` → `14`
 - `p` → prints `14`
 
+To check if the input is valid, you can use the `dc` command in your terminal:
+
+```bash
+echo "5 1 2 + 4 * + 3 - p" | dc
+```
+
+for exmple.
+
+To see the documentation, [click this link](https://www.gnu.org/software/bc/manual/dc-1.05/html_mono/dc.html).
+
 ---
 
 ## Tokens and Patterns
