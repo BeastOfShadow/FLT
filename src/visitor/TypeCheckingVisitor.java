@@ -174,7 +174,7 @@ public class TypeCheckingVisitor implements IVisitor {
             resType = rightTd;
         }
 
-        if (node.getOp() == LangOper.DIV && leftTd.getType() == TypeTd.FLOAT || rightTd.getType() == TypeTd.FLOAT) {
+        if (node.getOp() == LangOper.DIV && (leftTd.getType() == TypeTd.FLOAT || rightTd.getType() == TypeTd.FLOAT)) {
             System.out.println("Changing operation to DIV_FLOAT due to FLOAT type");
             node.setOp(LangOper.DIV_FLOAT);
         }

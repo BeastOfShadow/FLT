@@ -52,7 +52,7 @@ public class TestCodeGenerator {
         nP.accept(cgVisit);
 
         assertEquals(cgVisit.getLog(), "");
-        assertEquals("5 3 + sa la 0.5 5 k / 0 k sb la p P lb 4 5 k / 0 k sb lb p P lb 1 - sc lc lb 5 k / 0 k sc lc p P",
+        assertEquals("5 3 + sa la 0.5 + sb la p P lb 4 5 k / 0 k sb lb p P lb 1 - sc lc lb * sc lc p P",
         cgVisit.getGeneratedCode());
     }
 
