@@ -199,7 +199,7 @@ public class Scanner implements IScanner {
 		if (letters.contains(peekChar())) {
 			builder.append(readChar());
 
-			while ((letters.contains(peekChar()) || digits.contains(peekChar())) && !skpChars.contains(peekChar())) {
+			while ((letters.contains(peekChar()) || digits.contains(peekChar()))) {
 				builder.append(readChar());
 			}
 
